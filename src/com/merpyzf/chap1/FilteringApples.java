@@ -3,10 +3,9 @@ package com.merpyzf.chap1;
 import sun.applet.AppletListener;
 
 import javax.xml.stream.events.StartDocument;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Created by 春水碧于天 on 2017/10/19.
@@ -35,11 +34,35 @@ public class FilteringApples {
 
         initData();
 
-
         List<Apple> appleList = filterApples(inventory, this::isHeavyApple);
-
         //与上面的写法等价，使用lambda表达式的写法，针对一个功能的代码行数较少，并且只使用一次，这样写会比较简洁
         filterApples(inventory, (Apple a)->a.weight>150);
+
+        //使用串行进行筛选处理
+        List<Apple> heavyApples = inventory.stream()
+                .filter((Apple a)->a.getWeight()>150)
+                .collect(Collectors.toList());
+
+        System.out.println("串行处理结果: "+heavyApples);
+
+        /**
+         * 使用并行进行筛选处理
+         *
+         * 对应 图 1-6
+         * 在两个CPU上进行列表筛选，可以让一个CPU处理列表的前一半，
+         * 第二个CPU处理后一半，这称为分支步骤。CPU随后对各自半个列表做筛选，
+         * 最后一个CPU会把两个结果合并起来
+         *
+         */
+        List<Apple> greenApples = inventory.parallelStream()
+                .filter((Apple a)-> "green".equals(a.getColor()))
+                .collect(Collectors.toList());
+
+        System.out.println("并行处理结果: "+greenApples);
+
+
+
+
 
 
     }

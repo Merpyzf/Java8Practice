@@ -50,6 +50,7 @@
 11. Java8定义好的函数式接口:
 
     Predicate:
+    需要表示一个设计类型T的布尔表达式时可以使用这个接口
     
     ```
     @FunctionalInterface
@@ -57,12 +58,82 @@
         boolean test(T t);
     }
     
+    //Predicate函数式接口使用示例
+    public static <T> List<T> filter(List<T> list, Predicate<T> p){
+        
+        List<T> results = new ArrayList<>();
+        for(T s : list){
+            
+            if(p.test(s)){
+                
+                results.add(s);
+            }
+        
+        }
+        return results;
+    }
+    
+    ```
+    Consumer
+    ```
+    @FunctionalInterfance
+    public interface Consumer<T>{
+   
+        void accept(T t);
+  
+    }
+    
+    // 使用示例
+    public static <T> void forEach(List<T> list, Consumer<T> c){
+        for(T l : list){
+            c.accept(l);
+        }
+        
+    }
+    
+    //调用forEach方法进行遍历集合，并实现打印
+    forEach(
+        Arrays.asList(1,2,3,4,5),
+        (Integer i) -> System.out.println(i)
+    )
+    
     ```
     
-    Consumer
-    
-    
     Function
+   
+    ```
+    @FunctionalInterface
+    public interface Function<T, R>{
+        
+        R apply(T t);
+    
+    }
+    
+    //使用示例
+    public static <T, R> List<R> map(List<T> list, Function<T, R> f){
+        
+        List<R> results = new ArrayList<>();
+        
+        for(T l : list){
+            
+            results.add(f.apply(l));
+        
+        }
+     
+        return results;
+    }
+    
+    // [7,2,6]
+    List<Integer> l = map(Arrays.asList("lambdas","in","action"),
+        //Lambda表达式的参数类型要和函数方式接口中声明的方法类型一致
+        (String s)->s.length()
+    )
+    
+    
+    
+    
+    
+    ```
 
 12. 泛型只能绑定到引用类型
 
@@ -77,4 +148,6 @@ list.add(i);
 }
 ```
 但是在性能方面需要付出代价。装箱后的本质就是把原始类型包裹起来，并保存在堆里。因此，装箱后的值需要更多的内存，并需要额外的内存搜索来获取被包裹的原始值。 
+
+使用IntPredicate来避免在输入和输入都是原始类型时的装箱操作
 
